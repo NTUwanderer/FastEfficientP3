@@ -13,6 +13,7 @@
 #include "LambdaLambda.h"
 #include "HBOA.h"
 #include "Popless.h"
+#include "Pyramid_DSMGA2.h"
 #include <unordered_map>
 
 namespace optimize {
@@ -25,8 +26,9 @@ static std::unordered_map<string, pointer> lookup( {
   { "Pyramid", Pyramid::create },
   { "RandomRestartHC", RandomRestartHC::create },
   { "LambdaLambda", LambdaLambda::create },
-  { "HBOA", HBOA::create},
-  { "Popless", Popless::create},
+  { "HBOA", HBOA::create },
+  { "Popless", Popless::create },
+  { "Pyramid_DSMGA2", Pyramid_DSMGA2::create },
 });
 }
 
