@@ -15,6 +15,7 @@ CPP_SRCS += \
 ../src/OptimizationCollection.cpp \
 ../src/Popless.cpp \
 ../src/Population.cpp \
+../src/Population_DSMGA2.cpp \
 ../src/Pyramid.cpp \
 ../src/Pyramid_DSMGA2.cpp \
 ../src/RandomRestartHC.cpp \
@@ -34,6 +35,7 @@ OBJS += \
 ./src/OptimizationCollection.o \
 ./src/Popless.o \
 ./src/Population.o \
+./src/Population_DSMGA2.o \
 ./src/Pyramid.o \
 ./src/Pyramid_DSMGA2.o \
 ./src/RandomRestartHC.o \
@@ -53,6 +55,7 @@ CPP_DEPS += \
 ./src/OptimizationCollection.d \
 ./src/Popless.d \
 ./src/Population.d \
+./src/Population_DSMGA2.d \
 ./src/Pyramid.d \
 ./src/Pyramid_DSMGA2.d \
 ./src/RandomRestartHC.d \

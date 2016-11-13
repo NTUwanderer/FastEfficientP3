@@ -36,7 +36,7 @@ bool Pyramid_DSMGA2::add_unique(const vector<bool> & solution, size_t level) {
           return false;
         }
       // Create new levels as necessary
-      pops.push_back(Population(config, level));
+      pops.push_back(Population_DSMGA2(config, level));
     }
     // Add the solution and rebuild the tree
     pops[level].add(solution);

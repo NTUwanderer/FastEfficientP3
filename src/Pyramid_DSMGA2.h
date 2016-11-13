@@ -8,7 +8,7 @@
 #ifndef PYRAMID_DSMGA2_H_
 #define PYRAMID_DSMGA2_H_
 
-#include "Population.h"
+#include "Population_DSMGA2.h"
 #include "Evaluation.h"
 #include "Util.h"
 #include "HillClimb.h"
@@ -46,7 +46,7 @@ class Pyramid_DSMGA2 : public Optimizer {
   bool add_unique(const vector<bool> & solution, size_t level);
 
   // the pyramid_dsmga2 of populations
-  vector<Population> pops;
+  vector<Population_DSMGA2> pops;
   // keeps track of the set of solutions in the pyramid_dsmga2
   std::unordered_set<vector<bool>> seen;
   // configuration options
