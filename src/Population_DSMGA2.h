@@ -20,6 +20,8 @@
 #include "Util.h"
 #include "Evaluation.h"
 
+#include "Chromosome.h"
+
 using std::vector;
 using std::unordered_map;
 using std::array;
