@@ -5,15 +5,36 @@
 
 class Chromosome {
  public:
- 	Chromosome(Random& rand, size_t length) {
+ 	Chromosome(Random& rand, size_t length):
+		uplink(0),
+		downlink(0) {
  		solution = rand_vector(rand, length);
  	}
-	vector<bool>& getSolution() {
+
+	const vector<bool> & getSolution() const {
 		return solution;
 	}
+
+	vector<bool> & getSolution() {
+		return solution;
+	}
+
+	bool&& operator[](std::size_t idx) {
+		return solution[idx];
+	}
+
+	const bool& operator[](std::size_t idx) const {
+		return solution[idx];
+	}
+
+	void setSolution(vector<bool>& _solution) {
+		solution = _solution;
+	}
+
 	Chromosome* getUplink() {
 		return uplink;
 	}
+
 	Chromosome* getDownlink() {
 		return downlink;
 	}

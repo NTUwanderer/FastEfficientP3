@@ -11,24 +11,26 @@ using std::endl;
 
 // Applies crossover between the passed in solution as each level
 // of the Pyramid_DSMGA2
-void Pyramid_DSMGA2::climb(vector<bool> & solution, float & fitness) {
+void Pyramid_DSMGA2::climb(Chromosome & chromosome, float & fitness) {
+	vector<bool> & solution = chromosome.getSolution();
   // attempts to add this solution to the base level
-  add_unique(solution, 0);
+  add_unique(chromosome, 0);
   for (size_t level = 0; level < pops.size(); level++) {
     float prev = fitness;
     // Use population clusters and population solutions to make new solution
-    pops[level].improve(rand, solution, fitness, cross_counter);
+    pops[level].improve(rand, chromosome, fitness, cross_counter);
     // add it to the next level if its a strict fitness improvement,
     // or configured to always add solutions
     if (not only_add_improvements or prev < fitness) {
-      add_unique(solution, level + 1);
+      add_unique(chromosome, level + 1);
     }
   }
 }
 
 // Add the solution to the specified level of the population, only if it is
 // unique.  Returns true if added.
-bool Pyramid_DSMGA2::add_unique(const vector<bool> & solution, size_t level) {
+bool Pyramid_DSMGA2::add_unique(const Chromosome & chromosome, size_t level) {
+	const vector<bool> & solution = chromosome.getSolution();
   if (seen.find(solution) == seen.end()) {
     if (pops.size() == level) {
       if (config.get<int>("wait_until_k_modeled"))
@@ -39,7 +41,7 @@ bool Pyramid_DSMGA2::add_unique(const vector<bool> & solution, size_t level) {
       pops.push_back(Population_DSMGA2(config, level));
     }
     // Add the solution and rebuild the tree
-    pops[level].add(solution);
+    pops[level].add(chromosome);
     pops[level].rebuild_tree(rand);
     // track that this solution is now in the Pyramid_DSMGA2
     if (config.get<int>("prevent_duplicates")) {
@@ -54,12 +56,13 @@ bool Pyramid_DSMGA2::add_unique(const vector<bool> & solution, size_t level) {
 bool Pyramid_DSMGA2::iterate() {
   // generate a random solution
   restarts++;
-  vector<bool> solution = rand_vector(rand, length);
+  Chromosome chromosome = Chromosome(rand, length);
+  vector<bool>& solution = chromosome.getSolution();
   float fitness = local_counter->evaluate(solution);
   // perform a local search hill climber
   hill_climber(rand, solution, fitness, local_counter);
   // perform crossover with each level of the Pyramid_DSMGA2
-  climb(solution, fitness);
+  climb(chromosome, fitness);
   // P3 never "converges"
   return true;
 }
@@ -79,11 +82,11 @@ string Pyramid_DSMGA2::finalize() {
       << endl;
   for (const auto& pop : pops) {
     float total = 0;
-    for (const auto& solution : pop.solutions) {
-      total += evaluator->evaluate(solution);
+    for (const auto& chromosome : pop.chromosomes) {
+      total += evaluator->evaluate(chromosome.getSolution());
     }
-    out << pop.solutions.size() << "\t" << pop.successes << "\t" << pop.ties
-        << "\t" << pop.failures << "\t" << total / pop.solutions.size() << "\t"
+    out << pop.chromosomes.size() << "\t" << pop.successes << "\t" << pop.ties
+        << "\t" << pop.failures << "\t" << total / pop.chromosomes.size() << "\t"
         << pop.donation_attempts << "\t" << pop.donation_failures << endl;
   }
   return out.str();

@@ -42,8 +42,8 @@ Population_DSMGA2::Population_DSMGA2(Configuration& config, size_t _level) {
 }
 
 // Puts the solution into the Population_DSMGA2, updates the entropy table as requested
-void Population_DSMGA2::add(const vector<bool> & solution, bool use_in_tree) {
-  solutions.push_back(solution);
+void Population_DSMGA2::add(const Chromosome & chromosome, bool use_in_tree) {
+  chromosomes.push_back(chromosome);
   if (not use_in_tree) {
     return;
   }
@@ -53,7 +53,7 @@ void Population_DSMGA2::add(const vector<bool> & solution, bool use_in_tree) {
     for (size_t j = i + 1; j < length; j++) {
       auto& entry = occurrences[j][i];
       // Updates the entry of the 4 long array based on the two bits
-      entry[(solution[j] << 1) + solution[i]]++;
+      entry[(chromosome[j] << 1) + chromosome[i]]++;
     }
   }
 }
@@ -253,10 +253,10 @@ bool Population_DSMGA2::k_modeled() {
       }
       bool all_zero = false;
       bool all_one = false;
-      for (const auto & solution : solutions) {
+      for (const auto & chromosome : chromosomes) {
         size_t count = 0;
         for (const auto c : cluster) {
-          count += solution[c];
+          count += chromosome[c];
         }
         if (count == 0) {
           all_zero = true;
@@ -280,9 +280,11 @@ bool Population_DSMGA2::k_modeled() {
 // an evaluation if a change was actually made to "solution".  Reverts that
 // change if the new fitness was worse than before the change.  Returns
 // true if an evaluation was performed.
-bool Population_DSMGA2::donate(vector<bool> & solution, float & fitness,
-                        vector<bool> & source, const vector<int> & cluster,
+bool Population_DSMGA2::donate(Chromosome & chromosome, float & fitness,
+                        Chromosome & c_source, const vector<int> & cluster,
                         shared_ptr<Evaluator> evaluator) {
+	vector<bool> & solution = chromosome.getSolution();
+	vector<bool> & source = c_source.getSolution();
   // swap all of the cluster indices, watching for any change
   bool changed = false;
   for (const auto& index : cluster) {
@@ -322,10 +324,10 @@ bool Population_DSMGA2::donate(vector<bool> & solution, float & fitness,
 
 // Performs an entire crossover event, applying all discovered clusters, in an
 // attempt to use the Population_DSMGA2 to improve "solution".
-void Population_DSMGA2::improve(Random& rand, vector<bool> & solution, float & fitness,
+void Population_DSMGA2::improve(Random& rand, Chromosome & chromosome, float & fitness,
                          shared_ptr<Evaluator> evaluator) {
   // Data structure used to select random Population_DSMGA2 donors
-  vector<int> options(solutions.size());
+  vector<int> options(chromosomes.size());
   iota(options.begin(), options.end(), 0);
   int unused;
   int index, working = 0;
@@ -349,7 +351,7 @@ void Population_DSMGA2::improve(Random& rand, vector<bool> & solution, float & f
       unused -= 1;
 
       // Attempt the donation
-      different = donate(solution, fitness, solutions[working], cluster,
+      different = donate(chromosome, fitness, chromosomes[working], cluster,
                          evaluator);
       // Break loop if configured to stop_after_one or donate returned true
     } while (unused >= 0 and not different and not stop_after_one);

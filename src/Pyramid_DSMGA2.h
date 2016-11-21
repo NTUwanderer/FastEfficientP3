@@ -30,7 +30,7 @@ class Pyramid_DSMGA2 : public Optimizer {
   }
   // Iteratively improves the solution using the pyramid_dsmga2 of populations
   // leverages the Population class extensively
-  void climb(vector<bool> & solution, float & fitness);
+  void climb(Chromosome & chromosome, float & fitness);
   // Peforms one complete iteration of
   // * random generation
   // * hill climbing
@@ -43,7 +43,7 @@ class Pyramid_DSMGA2 : public Optimizer {
  private:
   // Handles adding a solution to the population.
   // Returns true if it was unique and therefore added.
-  bool add_unique(const vector<bool> & solution, size_t level);
+  bool add_unique(const Chromosome & chromosome, size_t level);
 
   // the pyramid_dsmga2 of populations
   vector<Population_DSMGA2> pops;

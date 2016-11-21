@@ -33,16 +33,16 @@ class Population_DSMGA2 {
   Population_DSMGA2(Configuration& config, size_t _level = 0);
   virtual ~Population_DSMGA2() = default;
   // Storage for all of the solutions in the Population_DSMGA2
-  vector<vector<bool> > solutions;
+  vector<Chromosome> chromosomes;
 
   // Adds a solution to the Population_DSMGA2.  Optional argument to prevent
   // the solution from being used in entropy calculations
-  void add(const vector<bool> & solution, bool use_in_tree = true);
+  void add(const Chromosome & chromosome, bool use_in_tree = true);
   // Improves the passed in solution using crossover, as guided by the
   // entropy table and solutions in the Population_DSMGA2.  "fitness" should
   // start as the fitness of "solution", and both will be set to the
   // improved values after application.
-  void improve(Random& rand, vector<bool> & solution, float & fitness,
+  void improve(Random& rand, Chromosome & chromosome, float & fitness,
                shared_ptr<Evaluator> evaluator);
   // Use the pairwise frequency table to construct a linkage tree
   void rebuild_tree(Random& rand);
@@ -80,7 +80,7 @@ class Population_DSMGA2 {
   // If the solution was modified by this action, it is evaluated.  If the new
   // fitness is no worse the modification is kept and the fitness value is updated.
   // Returns true if an evaluation was performed.
-  bool donate(vector<bool> & solution, float & fitness, vector<bool> & source,
+  bool donate(Chromosome & solution, float & fitness, Chromosome & c_source,
       const vector<int> & cluster, shared_ptr<Evaluator> evaluator);
 
   // Cluster Ordering Methods - These specify how to take the clusters created by linking and convert
