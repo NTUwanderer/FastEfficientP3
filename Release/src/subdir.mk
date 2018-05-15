@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/main.cpp \
 ../src/Configuration.cpp \
 ../src/Evaluation.cpp \
 ../src/Experiments.cpp \
@@ -19,9 +20,11 @@ CPP_SRCS += \
 ../src/RandomRestartHC.cpp \
 ../src/Record.cpp \
 ../src/Util.cpp \
-../src/main.cpp 
+../src/sat.cpp \
+../src/spin.cpp 
 
 OBJS += \
+./src/main.o \
 ./src/Configuration.o \
 ./src/Evaluation.o \
 ./src/Experiments.o \
@@ -37,9 +40,11 @@ OBJS += \
 ./src/RandomRestartHC.o \
 ./src/Record.o \
 ./src/Util.o \
-./src/main.o 
+../src/sat.o \
+../src/spin.o
 
 CPP_DEPS += \
+./src/main.d \
 ./src/Configuration.d \
 ./src/Evaluation.d \
 ./src/Experiments.d \
@@ -55,7 +60,8 @@ CPP_DEPS += \
 ./src/RandomRestartHC.d \
 ./src/Record.d \
 ./src/Util.d \
-./src/main.d 
+../src/sat.d \
+../src/spin.d
 
 
 # Each subdirectory must supply rules for building sources it contributes

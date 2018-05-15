@@ -16,6 +16,8 @@
 #include <array>
 #include "Configuration.h"
 #include "Util.h"
+#include "sat.h"
+#include "spin.h"
 
 #define PI 3.14159265
 
@@ -205,12 +207,7 @@ class MAXSAT : public Evaluator {
   create_evaluator(MAXSAT);
  private:
   int precision;
-  vector<std::array<int, 3>> clauses;
-  vector<std::array<bool, 3>> signs;
-  // Data structure used to select the negative signs on literals.
-  // Ensures proper distribution of negated literals.
-  vector<std::array<int, 3>> sign_options = { { {0, 0, 1} }, { {0, 1, 0} },
-    { { 1, 0, 0} }, { {1, 0, 0} }, { {0, 1, 1} }, { {1, 1, 1} }, };
+  SATinstance mySAT;
 };
 
 // The Ising Spin Glass problem is defined by a 2d toroidal grid
@@ -226,12 +223,8 @@ class IsingSpinGlass : public Evaluator {
  private:
   int length;
   int precision;
-  int min_energy;
-  float span;
-  // used to quickly convert a bit to a sign.
-  std::array<int, 2> bit_to_sign = { { -1, 1 } };
-  // each spin is composed of 3 numbers: index, index, sign
-  vector<std::array<int, 3>> spins;
+  SPINinstance mySPIN;
+  double delta;
 };
 
 // Discretization of the common Rastrigin function into grey coded bits.

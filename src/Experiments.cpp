@@ -25,6 +25,7 @@ Record single_run(Random& rand, Configuration& config,
   while (recorder->best_fitness < good_enough and recorder->evaluations < limit
       and improvement_possible) {
     improvement_possible = optimizer->iterate();
+    std::cout << "best: " << recorder->best_fitness << ", good_enough: " << good_enough << ", nfe: " << recorder->evaluations << std::endl;
   }
   recorder->results.metadata = optimizer->finalize();
   return recorder->results;
