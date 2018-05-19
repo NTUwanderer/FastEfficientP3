@@ -408,115 +408,71 @@ float HIFF::evaluate(const vector<bool> & solution) {
 // the problem see and run number
 MAXSAT::MAXSAT(Configuration& config, int run_number) {
   size_t length = config.get<int>("length");
+  int ell = length;
+  int s_num = config.get<int>("s_num");
+  char filename[200];
+  sprintf(filename, "../SAT/uf%d/uf%d-0%d.cnf", ell, ell, s_num);
+  printf("Loading: %s\n", filename);
+  loadSAT(filename, &mySAT);
   precision = config.get<int>("precision");
-  clauses.resize(
-      float_round(config.get<float>("clause_ratio") * length, precision));
-  signs.resize(clauses.size());
 
   int rng_seed = config.get<int>("problem_seed") + run_number;
   Random rand(rng_seed);
 
-  // Create the random target solution
-  vector<bool> solution = rand_vector(rand, length);
-
-  // Data structure used to select random variables to include in a clause
-  vector<int> options(length);
-  std::iota(options.begin(), options.end(), 0);
-
-  // Distributions for selecting 3 variables at random
-  std::uniform_int_distribution<> dist[] = {
-      std::uniform_int_distribution<>(0, length - 1),
-      std::uniform_int_distribution<>(1, length - 1),
-      std::uniform_int_distribution<>(2, length - 1)
-  };
-
-  auto sign_select = std::uniform_int_distribution<>(0, sign_options.size() - 1);
-
-  for (size_t i = 0; i < clauses.size(); i++) {
-    // Choose a random sign setting for this clause
-    int select = sign_select(rand);
-
-    // For each term in this clause
-    for (int c = 0; c < 3; c++) {
-      // Choose a random variable to be a term in the clause
-      std::swap(options[c], options[dist[c](rand)]);
-      clauses[i][c] = options[c];
-      // Set the sign to agree / disagree with the solution based on chosen
-      // sign option
-      signs[i][c] = sign_options[select][c] == solution[options[c]];
-    }
-  }
+  config.set("fitness_limit", 0);
 }
 
 // Count how many clauses evaluate to true
 float MAXSAT::evaluate(const vector<bool> & solution) {
-  int total = 0;
-  for (size_t i = 0; i < clauses.size(); i++) {
-    for (size_t c = 0; c < 3; c++) {
-      // if the literal is true, move to the next clause
-      if (solution[clauses[i][c]] == signs[i][c]) {
-        total++;
-        break;
-      }
-    }
+  int *x = new int[solution.size()];
+
+  for ( unsigned i = 0; i < solution.size(); ++i) {
+      x[i] = solution[i];
   }
 
+  double result = evaluateSAT(x, &mySAT);
+  delete []x;
+
   // Convert to percentage of total
-  return float_round(float(total) / clauses.size(), precision);
+  // return float_round(float(total) / clauses.size(), precision);
+  return result;
 }
 
 // Read in the problem from a file and set up the evaluation table
 IsingSpinGlass::IsingSpinGlass(Configuration& config, int run_number)
     : length(config.get<int>("length")),
       precision(config.get<int>("precision")) {
+  int ell = length;
+  int s_num = config.get<int>("s_num");
+  char filename[200];
+  sprintf(filename, "../SPIN/%d/%d_%d",ell, ell, s_num);
+  printf("Loading: %s\n", filename);
+  loadSPIN(filename, &mySPIN);
+  precision = config.get<int>("precision");
+
+  printf ("opt: %f, fitness_limit: %f\n", mySPIN.opt, config.get<float>("fitness_limit"));
+  config.set("fitness_limit", mySPIN.opt);
+
+  printf ("opt: %f, fitness_limit: %f\n", mySPIN.opt, config.get<float>("fitness_limit"));
+
   int rng_seed = config.get<int>("problem_seed") + run_number;
-
-  // Build up the filename where this problem is stored
-  string filename = config.get<string>("problem_folder");
-  filename += +"IsingSpinGlass_";
-  filename += config.get<string>("ising_type") + "_";
-  filename += config.get<string>("length") + "_";
-  filename += to_string(rng_seed) + ".txt";
-  ifstream in(filename);
-  if (!in) {
-    throw invalid_argument(
-        "IsingSpinGlass data file does not exist: " + filename);
-  }
-  in >> min_energy;
-  string solution_string;
-  in >> solution_string;
-  int number_of_spins;
-  in >> number_of_spins;
-  spins.resize(number_of_spins);
-  for (auto& spin : spins) {
-    for (auto& part : spin) {
-      in >> part;
-    }
-  }
-  in.close();
-  span = number_of_spins - min_energy;
-
-  // Sanity check
-  vector<bool> solution(length);
-  for (int i = 0; i < length; i++) {
-    solution[i] = solution_string[i] == '1';
-  }
-  if (evaluate(solution) != 1) {
-    throw invalid_argument(
-        "IsingSpinGlass data file has inconsistent data: " + filename);
-  }
+  Random rand(rng_seed);
 }
 
 // Evaluate using the read in spins
 float IsingSpinGlass::evaluate(const vector<bool>& solution) {
-  int energy = 0;
-  for (const auto& spin : spins) {
-    energy -= (bit_to_sign[solution[spin[0]]] * spin[2]
-        * bit_to_sign[solution[spin[1]]]);
+  int *x = new int[solution.size()];
+
+  for ( unsigned i = 0; i < solution.size(); ++i) {
+      x[i] = solution[i];
   }
 
+  double result = evaluateSPIN(x, &mySPIN);
+  delete []x;
+
   // Convert to percentage of total
-  return float_round(1 - (energy - min_energy) / span, precision);
+  // return float_round(float(total) / clauses.size(), precision);
+  return result;
 }
 
 // Sets up a table of fitness function values based on possible gray

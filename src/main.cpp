@@ -101,7 +101,7 @@ int main(int argc, char * argv[]) {
     vector<Record> records = multirun(rand, config, problem, optimizer_method);
     auto summary = Record::summarize(records, config);
     ofstream out(dat_file);
-    cout << summary[MES] << " " << summary[MAD] << " ";
+    cout << "NFE: " << summary[MES] << "\nstdev: " << summary[MAD] << "\nFailNum: ";
     cout << summary[FAILURES] << endl;
     out << "# " << summary[MES] << " " << summary[MAD] << " ";
     out << summary[FAILURES] << endl;
