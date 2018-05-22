@@ -464,7 +464,10 @@ float IsingSpinGlass::evaluate(const vector<bool>& solution) {
   int *x = new int[solution.size()];
 
   for ( unsigned i = 0; i < solution.size(); ++i) {
-      x[i] = solution[i];
+    if (solution[i] == 1)
+      x[i] = 1;
+    else
+      x[i] = -1;
   }
 
   double result = evaluateSPIN(x, &mySPIN);
