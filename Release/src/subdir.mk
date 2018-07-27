@@ -21,6 +21,7 @@ CPP_SRCS += \
 ../src/Record.cpp \
 ../src/Util.cpp \
 ../src/sat.cpp \
+../src/mkp.cpp \
 ../src/spin.cpp 
 
 OBJS += \
@@ -41,6 +42,7 @@ OBJS += \
 ./src/Record.o \
 ./src/Util.o \
 ../src/sat.o \
+../src/mkp.o \
 ../src/spin.o
 
 CPP_DEPS += \
@@ -61,6 +63,7 @@ CPP_DEPS += \
 ./src/Record.d \
 ./src/Util.d \
 ../src/sat.d \
+../src/mkp.d \
 ../src/spin.d
 
 

@@ -18,6 +18,7 @@
 #include "Util.h"
 #include "sat.h"
 #include "spin.h"
+#include "mkp.h"
 
 #define PI 3.14159265
 
@@ -227,6 +228,16 @@ class IsingSpinGlass : public Evaluator {
   double delta;
 };
 
+class MKP : public Evaluator {
+ public:
+  MKP(Configuration& config, int run_number);
+  float evaluate(const vector<bool> & solution) override;
+  create_evaluator(MKP);
+ private:
+  int precision;
+  MKPinstance myMKP;
+};
+
 // Discretization of the common Rastrigin function into grey coded bits.
 // While the real valued problem is separable, it is also highly multimodal
 // making it a good test for crossover.
@@ -279,6 +290,7 @@ static std::unordered_map<string, pointer> lookup( {
     { "HIFF", HIFF::create },
     { "MAXSAT", MAXSAT::create },
     { "IsingSpinGlass", IsingSpinGlass::create },
+    { "MKP", MKP::create },
     { "Rastrigin", Rastrigin::create },
     { "External", External::create },
 });

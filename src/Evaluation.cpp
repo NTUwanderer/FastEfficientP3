@@ -478,6 +478,39 @@ float IsingSpinGlass::evaluate(const vector<bool>& solution) {
   return result;
 }
 
+MKP::MKP(Configuration& config, int run_number) {
+  size_t length = config.get<int>("length");
+  int ell = length;
+  int s_num = config.get<int>("s_num");
+  char filename[200];
+  sprintf(filename, "../All-MKP-Instances/sac94/weish/weish%02d.dat", s_num);
+  printf("Loading: %s\n", filename);
+  loadMKP(filename, &myMKP);
+  ell = myMKP.var;
+
+  precision = config.get<int>("precision");
+
+  config.set("length", ell);
+  config.set("fitness_limit", myMKP.opt);
+}
+
+// Count how many clauses evaluate to true
+float MKP::evaluate(const vector<bool> & solution) {
+
+  int *x = new int[solution.size()];
+
+  for ( unsigned i = 0; i < solution.size(); ++i) {
+      x[i] = solution[i];
+  }
+
+  double result = evaluateMKP(x, &myMKP);
+  delete []x;
+
+  // Convert to percentage of total
+  // return float_round(float(total) / clauses.size(), precision);
+  return result;
+}
+
 // Sets up a table of fitness function values based on possible gray
 // value settings
 Rastrigin::Rastrigin(Configuration& config, int run_number)
